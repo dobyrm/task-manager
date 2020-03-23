@@ -1,38 +1,62 @@
 <?php
 /**
- * Class ControllerForm
+ * Class HomeController
  */
 namespace Controller;
 
 use Exception;
-use Manager\TaskManager;
+use Core\Controller;
+use Core\View;
+use Model\TaskModel;
 
-class HomeController
+class HomeController extends Controller
 {
     /**
-     * @var [object] $taskManager
+     * @var TaskModel $task
      */
-    private $taskManager;
-    
+    private $tasks;
+
     /**
-     * Construct HomeController
+     * HomeController constructor.
      */
     public function __construct()
     {
-        $this->taskManager = new TaskManager();
+        $this->tasks = new TaskModel();
     }
 
     /**
-     * Render template by name template
+     * @return void
      */
     public function index()
     {
         try {
-            
-            return $this->taskManager->index();
+            $data = [];
+
+            $result = $this->tasks->getAll();
+            if(!empty($result)) {
+                $data = $this->mapping($result);
+            }
+
+            return View::render('home/index', $data);
         } catch(Exception $e) {
 
             return $e->getMessage();
         }
+    }
+
+    /**
+     * @param array $data
+     * @return void
+     */
+    private function mapping($data): array
+    {
+        foreach($data as $key => $row) {
+            // Mapping status for task
+            $row['status'] = $this->tasks::MAPPING_STATUS[$row['status']];
+
+            $data[$key] = $row;
+        }
+
+        return $data;
     }
 }

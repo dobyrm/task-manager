@@ -1,18 +1,16 @@
 <?php
 /**
- * Class Request
+ * Class Controller
  */
-namespace Services;
+namespace Core;
 
-final class Request
+class Controller
 {
     /**
-     * Collections get params
-     *
-     * @param [type] $index
-     * @return void
+     * @param array $index
+     * @return array
      */
-    public static function get($index = null)
+    public static function get($index = null): array
     {
         $params = [];
         $get = $_GET;
@@ -37,12 +35,10 @@ final class Request
     }
 
     /**
-     * Collections post params
-     *
-     * @param [type] $index
-     * @return void
+     * @param array $index
+     * @return array
      */
-    public static function post($index = null)
+    public static function post($index = null): array
     {
         $params = [];
         $post = $_POST;
