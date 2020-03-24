@@ -100,7 +100,7 @@ class Model
     {
         $this->sql = 'SELECT '. '*'
             . ' FROM '. $this->table
-            . ' WHERE '. $data['field'] . $data['conditions'] . $data['value'];
+            . ' WHERE '. $data['field'] . $data['conditions'] . "'" . $data['value'] ."'";
 
         return $this;
     }

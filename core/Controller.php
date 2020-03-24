@@ -87,7 +87,7 @@ class Controller
      * @param string $route
      * @return void
      */
-    public function redirect($route)
+    public function redirect($route = '/')
     {
         header("Location: " . $route); 
         exit();
@@ -117,5 +117,16 @@ class Controller
         }
 
         return $messages;
+    }
+
+    /**
+     * @return void
+     */
+    public function checkAccess()
+    {
+        if(!(isset($_SESSION['is_auth'])) && ($_SESSION['is_auth'] !== true)) {
+
+            $this->redirect();
+        }
     }
 }

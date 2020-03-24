@@ -49,8 +49,9 @@ class HomeController extends Controller
     public function edit()
     {
         try {
-            $id = $this->get('id');
+            $this->checkAccess();
 
+            $id = $this->get('id');
             $task = [];
             $tasks = $this->collectionTasks($id);
             if(isset($tasks[0])) {
@@ -74,6 +75,8 @@ class HomeController extends Controller
     public function createAction()
     {
         try {
+            $this->checkAccess();
+
             $request = $this->post();
             $data = $request;
             $data['status'] = $this->tasks::STATUS['new'];
@@ -93,7 +96,7 @@ class HomeController extends Controller
                 LANG_ADDED_TASK
             ];
 
-            $this->redirect('/');
+            $this->redirect();
         } catch(Exception $e) {
 
             return $e->getMessage();
@@ -106,6 +109,8 @@ class HomeController extends Controller
     public function updateAction()
     {
         try {
+            $this->checkAccess();
+
             $request = $this->post();
             $data = $request;
             $taskId = $data['id'];
@@ -147,6 +152,8 @@ class HomeController extends Controller
     public function performedAction()
     {
         try {
+            $this->checkAccess();
+
             $request = $this->get();
             $data['id'] = $request['id'];
             $data['status'] = $this->tasks::STATUS['done'];
@@ -156,7 +163,7 @@ class HomeController extends Controller
                 LANG_PERFORMER_TASK
             ];
 
-            $this->redirect('/');
+            $this->redirect();
         } catch(Exception $e) {
 
             return $e->getMessage();

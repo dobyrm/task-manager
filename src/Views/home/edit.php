@@ -10,7 +10,7 @@
       <div class="container">
         <div class="col-md-12">
         <a class="btn btn-primary btn-sm" href="/" role="button"><?=LANG_BACK?></a><br /><br />
-        <?php if(!empty($response['messages'])) : ?>
+          <?php if(!empty($response['messages'])) : ?>
             <? foreach($response['messages'] as $message) : ?>
               <div class="alert alert-success" role="alert">
                 <?=$message?>
@@ -19,9 +19,9 @@
           <?php endif; ?>
 
           <?php if(!empty($response['errors'])) : ?>
-            <? foreach($response['errors'] as $message) : ?>
+            <? foreach($response['errors'] as $error) : ?>
               <div class="alert alert-danger" role="alert">
-                <?=$message?>
+                <?=$error?>
               </div>
             <? endforeach ?>
           <?php endif; ?>

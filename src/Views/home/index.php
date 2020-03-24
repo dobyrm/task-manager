@@ -33,7 +33,9 @@
                   <th><?=LANG_EMAIL?></th>
                   <th><?=LANG_DESCRIPTION?></th>
                   <th><?=LANG_STATUS?></th>
-                  <th><?=LANG_ACTION?></th>
+                  <? if($_SESSION['is_auth']) : ?>
+                    <th><?=LANG_ACTION?></th>
+                  <? endif; ?>
                 </tr>
               </thead>
               <tbody>
@@ -46,10 +48,12 @@
                         <?=$row['status']?>
                         <?=$row['is_admin_edit'] ? ' & ' . $row['is_admin_edit'] : '' ?>
                       </td>
-                      <td>
-                        <a class="btn btn-primary btn-sm" href="?page=edit&id=<?=$row['id']?>" role="button"><?=LANG_EDIT?></a>
-                        <a class="btn btn-primary btn-sm" href="?mode=performed-task&id=<?=$row['id']?>" role="button"><?=LANG_PERFORMER?></a>
-                      </td>
+                      <? if($_SESSION['is_auth']) : ?>
+                        <td>
+                          <a class="btn btn-primary btn-sm" href="?page=edit&id=<?=$row['id']?>" role="button"><?=LANG_EDIT?></a>
+                          <a class="btn btn-primary btn-sm" href="?mode=performed-task&id=<?=$row['id']?>" role="button"><?=LANG_PERFORMER?></a>
+                        </td>
+                      <? endif; ?>
                     </tr>
                   <? endforeach ?>
               </tbody>
@@ -59,7 +63,9 @@
                   <th><?=LANG_EMAIL?></th>
                   <th><?=LANG_DESCRIPTION?></th>
                   <th><?=LANG_STATUS?></th>
-                  <th><?=LANG_ACTION?></th>
+                  <? if($_SESSION['is_auth']) : ?>
+                    <th><?=LANG_ACTION?></th>
+                  <? endif; ?>
                 </tr>
               </tfoot>
             </table>
