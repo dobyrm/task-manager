@@ -1,3 +1,7 @@
 html, body {
   height: 100%;
 }
+
+#tasks_length {
+  display: none;
+}
