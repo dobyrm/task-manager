@@ -11,12 +11,12 @@ class View
 {
     /**
      * @param string $view
-     * @param array $data
+     * @param array $response
      * @return void
      */
-    public static function render($view, $data = [])
+    public static function render($view, $response = [])
     {
-        extract($data, EXTR_SKIP);
+        extract($response, EXTR_SKIP);
 
         $file = dirname(__DIR__) . "/src/Views/" . $view . ".php";
 

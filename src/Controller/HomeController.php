@@ -30,14 +30,13 @@ class HomeController extends Controller
     public function index()
     {
         try {
-            $data = [];
-
-            $result = $this->tasks->getAll();
-            if(!empty($result)) {
-                $data = $this->mapping($result);
-            }
-
-            return View::render('home/index', $data);
+            $tasks = $this->collectionTasks();
+            $messages = $this->managerFlipSession('messages');
+            
+            return View::render('home/index', [
+                'data'      => $tasks,
+                'messages'  => $messages
+            ]);
         } catch(Exception $e) {
 
             return $e->getMessage();
@@ -45,14 +44,155 @@ class HomeController extends Controller
     }
 
     /**
-     * @param array $data
      * @return void
+     */
+    public function edit()
+    {
+        try {
+            $id = $this->get('id');
+
+            $task = [];
+            $tasks = $this->collectionTasks($id);
+            if(isset($tasks[0])) {
+                $task = $tasks[0];
+            }
+            $messages = $this->managerFlipSession('messages');
+            
+            return View::render('home/edit', [
+                'data'      => $task,
+                'messages'  => $messages
+            ]);
+        } catch(Exception $e) {
+
+            return $e->getMessage();
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function createAction()
+    {
+        try {
+            $request = $this->post();
+            $data = $request;
+            $data['status'] = $this->tasks::STATUS['new'];
+
+            $errors = $this->validation($data);
+            if(!empty($errors)) {
+                $tasks = $this->collectionTasks();
+                
+                return View::render('home/index', [
+                    'data' => $tasks,
+                    'errors' => $errors
+                ]);
+            }
+
+            $this->tasks->createTask($data);
+            $_SESSION['flip']['messages'] = [
+                LANG_ADDED_TASK
+            ];
+
+            $this->redirect('/');
+        } catch(Exception $e) {
+
+            return $e->getMessage();
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function updateAction()
+    {
+        try {
+            $request = $this->post();
+            $data = $request;
+            $taskId = $data['id'];
+
+            $errors = $this->validation($data);
+            if(!empty($errors)) {
+                $task = [];
+                $tasks = $this->collectionTasks($taskId);
+                if(isset($tasks[0])) {
+                    $task = $tasks[0];
+                }
+                
+                return View::render('home/edit', [
+                    'data' => $task,
+                    'errors' => $errors
+                ]);
+            }
+            $taskDescription = $this->tasks->getDescriptionById($taskId);
+            $data['is_admin_edit'] = 0;
+            if($data['description'] !== $taskDescription) {
+                $data['is_admin_edit'] = 1;
+            }
+
+            $this->tasks->updateTask($data);
+            $_SESSION['flip']['messages'] = [
+                LANG_UPDATED_TASK
+            ];
+
+            $this->redirect('/?page=edit&id=' . $data['id']);
+        } catch(Exception $e) {
+
+            return $e->getMessage();
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function performedAction()
+    {
+        try {
+            $request = $this->get();
+            $data['id'] = $request['id'];
+            $data['status'] = $this->tasks::STATUS['done'];
+
+            $this->tasks->performedTask($data);
+            $_SESSION['flip']['messages'] = [
+                LANG_PERFORMER_TASK
+            ];
+
+            $this->redirect('/');
+        } catch(Exception $e) {
+
+            return $e->getMessage();
+        }
+    }
+
+    /**
+     * @return array
+     */
+    private function collectionTasks($id = null): array
+    {
+        $data = [];
+
+        if(!empty($id)) {
+            $result = $this->tasks->getById($id);
+        } else {
+            $result = $this->tasks->getAll();
+        }
+        
+        if(!empty($result)) {
+            $data = $this->mapping($result);
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param array $data
+     * @return array
      */
     private function mapping($data): array
     {
         foreach($data as $key => $row) {
             // Mapping status for task
             $row['status'] = $this->tasks::MAPPING_STATUS[$row['status']];
+            $row['is_admin_edit'] = $this->tasks::MAPPING_IS_ADMIN_EDIT[$row['is_admin_edit']];
 
             $data[$key] = $row;
         }

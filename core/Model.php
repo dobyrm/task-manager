@@ -30,6 +30,11 @@ class Model
     private $fields;
 
     /**
+     * @var string $where
+     */
+    private $where = '';
+
+    /**
      * @var string $join
      */
     private $join = '';
@@ -79,67 +84,23 @@ class Model
      */
     public static function table($table)
     {
-        $orm = new Model();
-        $orm->table = $table;
-        $orm->sql = 'SELECT '. '*'
-            .' FROM '. $orm->table;
+        $model = new Model();
+        $model->table = $table;
+        $model->sql = 'SELECT '. '*'
+            .' FROM '. $model->table;
 
-        return $orm;
+        return $model;
     }
 
     /**
-     * @param array $fields
-     * @return $this
+     * @param array $data
+     * @return void
      */
-    public function fields($fields)
+    public function where($data)
     {
-        $this->fields = implode(',', $fields);
-        $this->sql = 'SELECT '. $this->fields
-            .' FROM '. $this->table;
-
-        return $this;
-    }
-
-    /**
-     * @param $tables
-     * @param $conditions
-     * @return $this
-     */
-    public function join($tables, $conditions)
-    {
-        $join = '';
-        for ($i = 0; $i < count($tables); $i++) {
-            $join .= ' JOIN ' . $tables[$i] . ' ON ' . $conditions[$i];
-        }
-        $this->join = $join;
-
-        return $this;
-    }
-
-    /**
-     * @param $table
-     * @param $condition
-     * @return $this
-     */
-    public function leftJoin($table, $condition)
-    {
-        $this->leftJoin = ' LEFT JOIN ' . $table . ' ON ' . $condition;
-
-        return $this;
-    }
-
-    /**
-     * @param $groupBy
-     * @return $this
-     */
-    public function groupBy($groupBy)
-    {
-        $this->groupBy = ' GROUP BY ' . implode(',', $groupBy);
-        $this->sql = 'SELECT '. $this->fields
-            .' FROM '. $this->table
-            . $this->leftJoin
-            . $this->join
-            . $this->groupBy;
+        $this->sql = 'SELECT '. '*'
+            . ' FROM '. $this->table
+            . ' WHERE '. $data['field'] . $data['conditions'] . $data['value'];
 
         return $this;
     }
@@ -196,6 +157,48 @@ class Model
         } catch (Exception $e) {
 
             throw new Exception('Failed to select data');
+        }
+    }
+
+    /**
+     * @param string $sql
+     * @param array $data
+     * @return void
+     */
+    public function insert($sql, $data)
+    {
+        try {
+            $sth= $this->dbh->prepare($sql);
+            if($sth->execute($data)) {
+                
+                return true;
+            }
+
+            return false;
+        } catch (Exception $e) {
+
+            throw new Exception('Failed to set data');
+        }
+    }
+
+    /**
+     * @param string $sql
+     * @param array $data
+     * @return void
+     */
+    public function update($sql, $data)
+    {
+        try {
+            $sth= $this->dbh->prepare($sql);
+            if($sth->execute($data)) {
+
+                return true;
+            }
+
+            return false;
+        } catch (Exception $e) {
+
+            throw new Exception('Failed to update data');
         }
     }
 

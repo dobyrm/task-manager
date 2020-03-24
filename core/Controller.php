@@ -8,9 +8,9 @@ class Controller
 {
     /**
      * @param array $index
-     * @return array
+     * @return void
      */
-    public static function get($index = null): array
+    public function get($index = null)
     {
         $params = [];
         $get = $_GET;
@@ -36,9 +36,9 @@ class Controller
 
     /**
      * @param array $index
-     * @return array
+     * @return void
      */
-    public static function post($index = null): array
+    public function post($index = null)
     {
         $params = [];
         $post = $_POST;
@@ -60,5 +60,62 @@ class Controller
 
         return $params;
 
+    }
+
+    /**
+     * @param array $data
+     * @return void
+     */
+    public function validation($data)
+    {
+        $errors = [];
+
+        foreach($data as $key => $val) {
+            if(empty($val)) {
+                $errors[$key] = $key . ' ' . LANG_VALID_EMPTY;
+            }
+        }
+
+        if (!filter_var($data["email"], FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = LANG_VALID_EMAIL_FORMAT_INVALID;
+        }
+
+        return $errors;
+    }
+
+    /**
+     * @param string $route
+     * @return void
+     */
+    public function redirect($route)
+    {
+        header("Location: " . $route); 
+        exit();
+    }
+
+    /**
+     * @param string $key
+     * @return void
+     */
+    public function emptySession($key)
+    {
+        if(isset($_SESSION[$key])) {
+            unset($_SESSION[$key]);
+        }
+    }
+
+    /**
+     * @param string $key
+     * @return array
+     */
+    public function managerFlipSession($key)
+    {
+        $messages = [];
+        if(!empty($_SESSION['flip'])) {
+            $messages = $_SESSION['flip'][$key];
+            $this->emptySession('flip');
+        }
+
+        return $messages;
     }
 }
