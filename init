@@ -1,0 +1,6 @@
+<?php
+
+mkdir('var', 0777);
+
+$file = 'var/config.php';
+file_put_contents($file, "<?php\r\n");
