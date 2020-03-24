@@ -50,12 +50,12 @@ class Controller
 
             if(isset($post[$index])) {
 
-                return $post[$index];
+                return htmlspecialchars($post[$index]);
             }
         }
 
         foreach($post as $key => $val) {
-            $params[$key] = $val;
+            $params[$key] = htmlspecialchars($val);
         }
 
         return $params;

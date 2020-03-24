@@ -75,8 +75,6 @@ class HomeController extends Controller
     public function createAction()
     {
         try {
-            $this->checkAccess();
-
             $request = $this->post();
             $data = $request;
             $data['status'] = $this->tasks::STATUS['new'];
